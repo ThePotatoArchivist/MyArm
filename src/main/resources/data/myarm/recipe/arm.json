@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "item": "create:brass_ingot"
+    },
+    "$": {
+      "item": "create:shaft"
+    },
+    "X": {
+      "item": "create:zinc_nugget"
+    }
+  },
+  "pattern": [
+    "X",
+    "$",
+    "#"
+  ],
+  "result": {
+    "count": 1,
+    "id": "myarm:screwdriver"
+  },
+  "fabric:load_conditions": [
+    {
+      "condition": "fabric:all_mods_loaded",
+      "values": [
+        "create"
+      ]
+    }
+  ]
+}

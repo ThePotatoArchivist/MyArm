@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "archives.tater.myarm.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "BipedEntityModelMixin",
+    "PlayerEntityModelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}

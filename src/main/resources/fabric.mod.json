@@ -1,0 +1,44 @@
+{
+	"schemaVersion": 1,
+	"id": "myarm",
+	"version": "${version}",
+	"name": "arm",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/myarm/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"archives.tater.myarm.MyArm"
+		],
+		"client": [
+			"archives.tater.myarm.MyArmClient"
+		],
+		"fabric-datagen": [
+			"archives.tater.myarm.MyArmDataGenerator"
+		]
+	},
+	"mixins": [
+		"myarm.mixins.json",
+		{
+			"config": "myarm.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.17.3",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"create": "*"
+	}
+}
