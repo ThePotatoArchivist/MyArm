@@ -45,6 +45,9 @@ public class MyArm implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    public static final String COMMAND_FAIL = "command." + MOD_ID + ".rearm.fail";
+    public static final String COMMAND_SUCCESS = "command." + MOD_ID + ".rearm.success";
+
     private static Item register(Identifier id, Item item) {
         return Registry.register(Registries.ITEM, id, item);
     }
@@ -86,10 +89,10 @@ public class MyArm implements ModInitializer {
                     .executes(context -> {
                         var player = context.getSource().getPlayer();
                         if (player == null || !player.hasAttached(DISARMED)) {
-                            context.getSource().sendError(Text.literal("You have both of yours already"));
+                            context.getSource().sendError(Text.translatable(COMMAND_FAIL));
                             return 0;
                         }
-                        context.getSource().sendMessage(Text.literal("Be more careful with it next time"));
+                        context.getSource().sendMessage(Text.translatable(COMMAND_SUCCESS));
                         player.removeAttached(DISARMED);
                         return 1;
                     }));

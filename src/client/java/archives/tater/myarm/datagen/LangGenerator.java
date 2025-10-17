@@ -20,5 +20,7 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(MyArm.ARM, "Brass Arm");
         translationBuilder.add(MyArm.SCREWDRIVER, "Brass Screwdriver");
         translationBuilder.add(ScrewdriverItem.LORE_TRANSLATION, "Might fit someone's... ???");
+        translationBuilder.add(MyArm.COMMAND_SUCCESS, "Be more careful with it next time");
+        translationBuilder.add(MyArm.COMMAND_FAIL, "You have both of yours already");
     }
 }

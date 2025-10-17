@@ -1,4 +1,6 @@
 {
+  "command.myarm.rearm.fail": "You have both of yours already",
+  "command.myarm.rearm.success": "Be more careful with it next time",
   "item.myarm.arm": "Brass Arm",
   "item.myarm.screwdriver": "Brass Screwdriver",
   "item.myarm.screwdriver.lore": "Might fit someone's... ???"
