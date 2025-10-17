@@ -7,6 +7,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
@@ -19,6 +20,7 @@ import net.minecraft.item.Item.Settings;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.Unit;
@@ -27,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
+
+import static net.minecraft.server.command.CommandManager.literal;
 
 @SuppressWarnings("UnstableApiUsage")
 public class MyArm implements ModInitializer {
@@ -76,6 +80,19 @@ public class MyArm implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
-
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            dispatcher.register(literal("could_you_give_me_a_hand")
+                    .requires(source -> source.getPlayer() == null || isDisarmable(source.getPlayer()))
+                    .executes(context -> {
+                        var player = context.getSource().getPlayer();
+                        if (player == null || !player.hasAttached(DISARMED)) {
+                            context.getSource().sendError(Text.literal("You have both of yours already"));
+                            return 0;
+                        }
+                        context.getSource().sendMessage(Text.literal("Be more careful with it next time"));
+                        player.removeAttached(DISARMED);
+                        return 1;
+                    }));
+        });
 	}
 }
