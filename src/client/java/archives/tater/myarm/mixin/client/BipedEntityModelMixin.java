@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
-@SuppressWarnings("UnstableApiUsage")
 @Mixin(BipedEntityModel.class)
 public class BipedEntityModelMixin {
     @Shadow
@@ -25,6 +25,6 @@ public class BipedEntityModelMixin {
             at = @At("TAIL")
     )
     private <T extends LivingEntity> void hideArm(T livingEntity, float f, float g, float h, float i, float j, CallbackInfo ci) {
-        leftArm.hidden = livingEntity.hasAttached(MyArm.DISARMED);
+        leftArm.hidden = livingEntity instanceof PlayerEntity player && MyArm.isDisarmable(player);
     }
 }

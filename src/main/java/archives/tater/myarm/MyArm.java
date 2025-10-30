@@ -9,6 +9,8 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
+import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -17,19 +19,20 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.Settings;
-import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
-import net.minecraft.util.Unit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
+import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -58,10 +61,10 @@ public class MyArm implements ModInitializer {
         return player.getUuid().equals(OWNER);
     }
 
-    public static final AttachmentType<Unit> DISARMED = AttachmentRegistry.create(id("disarmed"), builder -> builder
+    public static final AttachmentType<ItemStack> ARM_ITEM = AttachmentRegistry.create(id("arm_item"), builder -> builder
             .copyOnDeath()
-            .persistent(Unit.CODEC)
-            .syncWith(PacketCodec.unit(Unit.INSTANCE), AttachmentSyncPredicate.all())
+            .persistent(ItemStack.OPTIONAL_CODEC)
+            .syncWith(ItemStack.OPTIONAL_PACKET_CODEC, AttachmentSyncPredicate.all())
     );
 
     public static final Item ARM = register(id("arm"), new ArmItem(new Item.Settings()
@@ -78,6 +81,21 @@ public class MyArm implements ModInitializer {
             .maxCount(1)
     ));
 
+    public static ItemStack getArm(PlayerEntity player) {
+        return player.getAttachedOrElse(ARM_ITEM, ARM.getDefaultStack());
+    }
+
+    private static int returnArm(CommandContext<ServerCommandSource> context, ItemStack armStack) {
+        var player = context.getSource().getPlayer();
+        if (player == null || !getArm(player).isEmpty()) {
+            context.getSource().sendError(Text.translatable(COMMAND_FAIL));
+            return 0;
+        }
+        context.getSource().sendMessage(Text.translatable(COMMAND_SUCCESS));
+        player.setAttached(ARM_ITEM, armStack);
+        return 1;
+    }
+
 	@Override
 	public void onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -86,16 +104,11 @@ public class MyArm implements ModInitializer {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(literal("could_you_give_me_a_hand")
                     .requires(source -> source.getPlayer() == null || isDisarmable(source.getPlayer()))
-                    .executes(context -> {
-                        var player = context.getSource().getPlayer();
-                        if (player == null || !player.hasAttached(DISARMED)) {
-                            context.getSource().sendError(Text.translatable(COMMAND_FAIL));
-                            return 0;
-                        }
-                        context.getSource().sendMessage(Text.translatable(COMMAND_SUCCESS));
-                        player.removeAttached(DISARMED);
-                        return 1;
-                    }));
+                    .executes(context -> returnArm(context, ARM.getDefaultStack()))
+                    .then(argument("item", ItemStackArgumentType.itemStack(registryAccess))
+                            .executes(context -> returnArm(context, ItemStackArgumentType.getItemStackArgument(context, "item").createStack(1, false)))
+                    )
+            );
         });
 	}
 }

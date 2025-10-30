@@ -37,7 +37,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             at = @At("HEAD")
     )
     private void dropOffhand(CallbackInfo ci) {
-        if (!hasAttached(MyArm.DISARMED)) return;
+        if (!MyArm.getArm((PlayerEntity) (Object) this).isEmpty()) return;
         var hand = getMainArm() == Arm.LEFT ? Hand.MAIN_HAND : Hand.OFF_HAND;
         var stack = getStackInHand(hand);
         if (stack.isEmpty()) return;

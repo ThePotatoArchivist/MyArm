@@ -34,13 +34,14 @@ public class ScrewdriverItem extends Item {
     }
 
     private static @NotNull ActionResult tryDisarm(PlayerEntity user, LivingEntity entity) {
-        if (!(entity instanceof PlayerEntity player) || !MyArm.isDisarmable(player) || entity.hasAttached(MyArm.DISARMED)) return ActionResult.FAIL;
+        if (!(entity instanceof PlayerEntity player) || !MyArm.isDisarmable(player) || MyArm.getArm(player).isEmpty()) return ActionResult.FAIL;
 
         user.getWorld().playSoundFromEntity(user, entity, SoundEvents.BLOCK_COPPER_TRAPDOOR_OPEN, entity.getSoundCategory(), 1f, 0.7f);
 
-        entity.setAttached(MyArm.DISARMED, Unit.INSTANCE);
+        if (user.getWorld().isClient) return ActionResult.SUCCESS;
 
-        player.dropItem(MyArm.ARM.getDefaultStack(), false, true);
+        player.dropItem(MyArm.getArm(player), false, true);
+        player.setAttached(MyArm.ARM_ITEM, ItemStack.EMPTY);
 
         return ActionResult.SUCCESS;
     }

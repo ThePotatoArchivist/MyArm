@@ -19,10 +19,9 @@ public class ArmItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         var stack = user.getStackInHand(hand);
-        if (!MyArm.isDisarmable(user) || !user.hasAttached(MyArm.DISARMED)) return TypedActionResult.fail(stack);
+        if (!MyArm.isDisarmable(user) || !MyArm.getArm(user).isEmpty()) return TypedActionResult.fail(stack);
         user.playSound(SoundEvents.BLOCK_COPPER_TRAPDOOR_CLOSE, 1f, 0.7f);
-        stack.decrement(1);
-        user.removeAttached(MyArm.DISARMED);
-        return TypedActionResult.success(stack);
+        user.setAttached(MyArm.ARM_ITEM, stack);
+        return TypedActionResult.success(ItemStack.EMPTY);
     }
 }
