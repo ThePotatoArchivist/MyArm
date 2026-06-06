@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -54,7 +55,7 @@ public class MyArm implements ModInitializer {
 
     private static final UUID OWNER = UUID.fromString("23ba4b73-93d9-4013-bae9-018f4981f9d7");
 
-    public static boolean isDisarmable(PlayerEntity player) {
+    public static boolean isDisarmable(LivingEntity player) {
         return player.getUuid().equals(OWNER);
     }
 

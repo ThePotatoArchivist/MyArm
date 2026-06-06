@@ -26,6 +26,7 @@ public class PlayerEntityModelMixin {
             at = @At("TAIL")
     )
     private <T extends LivingEntity> void hideArm(T livingEntity, float f, float g, float h, float i, float j, CallbackInfo ci) {
-        leftSleeve.xScale = leftSleeve.yScale = leftSleeve.zScale = livingEntity.hasAttached(MyArm.DISARMED) ? 0 : 1;
+        if (MyArm.isDisarmable(livingEntity))
+            leftSleeve.xScale = leftSleeve.yScale = leftSleeve.zScale = livingEntity.hasAttached(MyArm.DISARMED) ? 0 : 1;
     }
 }
