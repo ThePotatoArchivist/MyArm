@@ -25,6 +25,6 @@ public class BipedEntityModelMixin {
             at = @At("TAIL")
     )
     private <T extends LivingEntity> void hideArm(T livingEntity, float f, float g, float h, float i, float j, CallbackInfo ci) {
-        leftArm.hidden = livingEntity.hasAttached(MyArm.DISARMED);
+        leftArm.xScale = leftArm.yScale = leftArm.zScale = livingEntity.hasAttached(MyArm.DISARMED) ? 0 : 1;
     }
 }
